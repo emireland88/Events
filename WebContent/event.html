@@ -1,0 +1,224 @@
+<html>
+<head>
+<link rel="stylesheet" type="text/css" id="cssContent" href="comSampleFramework/themes/default/css/Content.css" />
+<link rel="stylesheet" type="text/css" id="cssCore" href="comSampleFramework/themes/default/css/Core.css" />
+<link rel="stylesheet" type="text/css" id="cssLayout" href="comSampleFramework/themes/default/css/Layout.css" />
+<link rel="stylesheet" type="text/css" id="cssDock" href="comSampleFramework/themes/default/css/Dock.css" />
+<link rel="stylesheet" type="text/css" id="cssTabs" href="comSampleFramework/themes/default/css/Tabs.css" />
+<link rel="stylesheet" type="text/css" id="cssWindow" href="comSampleFramework/themes/default/css/Window.css" />
+<link rel="stylesheet" type="text/css" href="comSampleFramework/themes/default/css/style.css" />
+
+
+<script type="text/javascript" src="comSampleFramework/scripts/src/mui/mootools-1.2.4-core-yc.js"></script>
+<script type="text/javascript" src="comSampleFramework/scripts/src/mui/mootools-1.2.4-more-yc.js"></script>
+<script type="text/javascript" src="comSampleFramework/scripts/src/mui/mocha.js"></script>
+<script type="text/javascript" src="comSampleFramework/scripts/src/URL.js"></script>
+<script type="text/javascript" src="comSampleFramework/scripts/src/ajaxUtils.js"></script>
+<script type="text/javascript" src="comSampleFramework/scripts/src/domainEntityCrud.js"></script>
+
+<script type="text/javascript" src="events.js"></script>
+
+<title>Create Events</title>
+
+<style>
+	
+#desktop {
+	visibility: visible;
+}
+
+#desktopNavbar {
+	background: #f5f5f5;
+}
+
+#pageWrapper {
+	overflow: auto;
+	background: #7c9dbf;
+	border: 0;	
+}
+
+#page {
+	margin: 0 auto 0;
+	background: #fff;	
+}
+
+#header {
+	background: #f0f0f0;
+	padding: 20px;	
+}
+
+#navigation {
+	background: #f5f5f5;
+	padding: 5px 20px;	
+}
+
+#content {
+	padding: 20px;
+}
+
+#footer {
+	background: #f0f0f0;
+	padding: 10px 20px;
+}
+
+#dockWrapper {
+	border-top: 1px solid #999;
+	border-bottom: 0;
+}
+
+#dockWrapper.top {
+	border-top: 0;
+	border-bottom: 1px solid #999;
+}
+
+</style>	
+    <script type="text/javascript" src="scripts/aboutBox.js"></script>
+    
+<!--     javascript functions moved to events.js  -->		  	
+
+
+
+<script type="text/javascript">
+<!--
+function Redirect()
+{
+    //window.location.href="http://www.google.com";
+    Response.AppendHeader("Refresh","0.5; url=" + "http://www.google.com" );
+}
+
+//document.write("You will be redirected to main page in 10 sec.");
+//setTimeout('Redirect()', 10000);
+//-->
+</script>
+	<style type="text/css">
+		h1 {
+			font-family:Arial;
+			font-size:28px;
+			}
+		th {
+			font-size:12px;
+			}
+		#header {
+			width:100%;
+			background:white;
+			padding:20px;
+			}
+		#desktopNavbar {
+			background: #181818;
+			height:+30px;
+			border-bottom:solid black 3px;
+		}
+		.form {
+			padding-top:15px;
+			padding-left:15px;
+			}
+		#buttons {
+			margin-left:+150;
+			/*margin-right:auto;
+			width:80%;*/
+			}
+		ul {
+			list-style-type:none;
+			padding-left:15px;
+			}
+		.navButtons {
+			color:white;
+			font-weight:bold;
+			font-size:12px;
+			
+			}
+		td {
+			padding:10px;
+			}	
+			
+	</style>
+</head>
+
+<body>
+<!--    <script type="text/javascript" src="scripts/src/pageTop.js"></script> -->
+
+
+	<div id="header"><h1>Create Event</h1></div>
+	<div id="desktopNavbar">
+	<table id="buttons">
+			<tr>
+<!--  		<td><INPUT TYPE="button" VALUE="Enter/Done" onClick="createOrUpdateDone()"></td>
+			<td><INPUT TYPE="button" VALUE="Enter/Continue" onClick="createOrUpdateContinue()"></td>
+		    <td><INPUT TYPE="button" VALUE="Enter/New" onClick="createOrUpdateNew()"></td> 
+		    <td><INPUT TYPE="button" VALUE="Search" onClick="search()"></td> 
+		    <td><INPUT TYPE="reset"  VALUE="Clear Form"></td>
+		    <td><INPUT Type="button" Value="Return to List" onClick="goToList()"></td>   -->
+		    
+		    <td><a class="navButtons" onClick="createOrUpdateDone()" style="cursor:pointer; cursor:hand;">Enter/Done</a></td>
+		    <td><a class="navButtons" onClick="createOrUpdateContinue()" style="cursor:pointer; cursor:hand;">Enter/Continue</a></td>
+		    <td><a class="navButtons" onClick="createOrUpdateNew()" style="cursor:pointer; cursor:hand;">Enter/New</a></td>
+		    <td><a class="navButtons" onClick="search()" style="cursor:pointer; cursor:hand;">Search</a></td>
+		    <td><a class="navButtons" onClick="goToList()" style="cursor:pointer; cursor:hand;">Return to List</a></td>
+		    <td><a class="navButtons" onClick="clearForm()"style="cursor:pointer; cursor:hand;">Clear Form</a></td>
+		</tr>
+	</table>
+	</div>
+	
+	<div class="form">
+	<FORM NAME="EVENT" METHOD="GET">
+	<ul>
+		<li><INPUT TYPE="hidden" NAME="gkey" size="10"></li>
+		<li>Hours:<INPUT type="number" NAME="hours" size="10"></li>
+		<li>Date:      <INPUT type="date" NAME="date" size="10"></li>
+		<li>Project:<INPUT type="text" NAME="project" size="80"></li>
+		<li>Notes:<textarea NAME="notes" rows="40" cols="120"></TEXTAREA></li>
+	</ul>
+<!--		<TABLE>
+		<FORM NAME="EVENT" METHOD="GET">
+			<INPUT TYPE="hidden" NAME="gkey" size="10"> 
+			<TR><TH>Hours:<TD><INPUT NAME="hours" size="10"></TD></TR> 
+			<TR><TH>Date:<TD><INPUT NAME="date" size="10"></TD></TR> 
+			<TR><TH>Project:<TD><INPUT NAME="project" size="80"></TD></TR> 
+			<TR><TH>Notes:<TD><textarea NAME="notes" rows="40" cols="120"></TEXTAREA></TD></TR> 
+			<TR>
+		        <TD COLSPAN="5" ALIGN="CENTER">
+		        <INPUT TYPE="button" VALUE="Enter/Done" onClick="createOrUpdateDone()">
+		        <INPUT TYPE="button" VALUE="Enter/Continue" onClick="createOrUpdateContinue()">
+		        <INPUT TYPE="button" VALUE="Enter/New" onClick="createOrUpdateNew()"> 
+		        <INPUT TYPE="button" VALUE="Search" onClick="search()"> 
+		        <INPUT TYPE="reset"  VALUE="Clear Form"> 
+		       
+		</FORM>
+	</TABLE>
+	  -->
+	</div> 
+
+<script type="text/javascript">
+
+	var url = document.URL;
+	var paramResult = URL.unserialize(url);
+	
+	var filterInfo = Array();
+	var i = 0;
+	for (var key in paramResult) {
+	    filterInfo[i] = {field:key, value:paramResult[key]};
+	    i = i + 1;
+	}	
+	
+	if (filterInfo.length > 0) {
+
+		// Populate itemsArray
+		var displayInfo = Array();
+		displayInfo[0] = "notes";
+		displayInfo[1] = "hours";
+		displayInfo[2] = "date";
+		displayInfo[3] = "gkey";
+		displayInfo[4] = "project";
+
+		itemsArray = domainEntityCrud.getMatchingDomainEntities("PJIEventsFrontServlet", "Event", filterInfo, displayInfo);	
+		
+		document.forms["EVENT"]["notes"].value = itemsArray[0].notes;
+		document.forms["EVENT"]["hours"].value = itemsArray[0].hours;
+		document.forms["EVENT"]["date"].value = itemsArray[0].date;
+		document.forms["EVENT"]["project"].value = itemsArray[0].project;
+		document.forms["EVENT"]["gkey"].value = itemsArray[0].gkey;
+	}
+</script>
+
+	
+</body>
+</html>

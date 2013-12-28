@@ -1,0 +1,296 @@
+<html>
+<head>
+<link rel="stylesheet" type="text/css" id="cssContent" href="comSampleFramework/themes/default/css/Content.css" />
+<link rel="stylesheet" type="text/css" id="cssCore" href="comSampleFramework/themes/default/css/Core.css" />
+<link rel="stylesheet" type="text/css" id="cssLayout" href="comSampleFramework/themes/default/css/Layout.css" />
+<link rel="stylesheet" type="text/css" id="cssDock" href="comSampleFramework/themes/default/css/Dock.css" />
+<link rel="stylesheet" type="text/css" id="cssTabs" href="comSampleFramework/themes/default/css/Tabs.css" />
+<link rel="stylesheet" type="text/css" id="cssWindow" href="comSampleFramework/themes/default/css/Window.css" />
+<link rel="stylesheet" type="text/css" href="comSampleFramework/themes/default/css/style.css" />
+<link rel="stylesheet" type="text/css" href="comSampleFramework/plugins/mochaList/style.css" />
+	
+<script type="text/javascript" src="comSampleFramework/scripts/src/mui/mootools-1.2.4-core-yc.js"></script>
+<script type="text/javascript" src="comSampleFramework/scripts/src/mui/mootools-1.2.4-more-yc.js"></script>
+<script type="text/javascript" src="comSampleFramework/scripts/src/mui/mocha.js"></script>
+<script type="text/javascript" src="comSampleFramework/scripts/src/URL.js"></script>
+<script type="text/javascript" src="comSampleFramework/plugins/mochaList/List.js"></script>
+<script type="text/javascript" src="comSampleFramework/scripts/src/ajaxUtils.js"></script>
+<script type="text/javascript" src="comSampleFramework/scripts/src/domainEntityCrud.js"></script>
+
+<script type="text/javascript" src="events.js"></script>
+
+<title>PJI Events</title>
+
+<script>
+var selectInfo = Array();
+var listElement = null;
+</script>
+
+<script type="text/javascript">
+
+function rebuildList() {
+
+	selectInfo = Array();
+	
+	// Populate itemsArray
+	var displayInfo = Array();
+	displayInfo[0] = "notes";
+	displayInfo[1] = "hours";
+	displayInfo[2] = "date";
+	displayInfo[3] = "gkey";
+	displayInfo[4] = "project";
+	
+	var url = document.URL;
+	var urlMap = URL.unserialize(url);
+	
+	var filterInfo = Array();
+
+	var i = 0;
+	for (var key in urlMap) {
+	    filterInfo[i] = {field:key, value:urlMap[key]};
+	    i++;
+	}	
+	
+	// Only show 90 days worth if no filter is specified.
+	if (filterInfo.length == 0) {
+		var threeMonthsAgoDate = new Date();
+		threeMonthsAgoDate.setDate(threeMonthsAgoDate.getDate()-90);
+		var month = threeMonthsAgoDate.getMonth();
+		var date = threeMonthsAgoDate.getDate();
+		var year = threeMonthsAgoDate.getFullYear();
+		var valueStr = ">" + month + "/" + date + "/" + year;
+	    filterInfo[0] = {field:"date", value:valueStr};
+	}
+	
+	var sortInfo = Array();
+	sortInfo[0] = {field:'date', order:'descend'};	
+	
+	var itemsArray = domainEntityCrud.getMatchingDomainEntities("PJIEventsFrontServlet", "Event", filterInfo, displayInfo, sortInfo);
+	
+	// truncate notes to cr or 80 chars
+	for (var i = 0; i < itemsArray.length; i++) {
+		var item = itemsArray[i];
+		var notes = item.notes;
+		var maxNotesLength = 80;
+		
+		if (notes != null) {
+			var crIndex = notes.indexOf("\n");
+			if (crIndex > 0 && crIndex < maxNotesLength) {
+				notes = notes.substr(0, crIndex + 1);
+			} else if (notes.length > maxNotesLength) {
+				notes = notes.substr(0, maxNotesLength + 1);
+			}
+			item.notes = notes;
+		}
+	}
+	
+	if (listElement != null) {
+		//itemsArray.pop();
+		listElement.update(itemsArray);
+	} else {
+		// Instantiate the list
+		listElement = new MUI.List({
+		    container:'page',
+		    showCheckBox:true,
+		    showCommand:true,
+		    width:250,
+		    height:100,
+		    id:'list1',
+		    items:itemsArray,
+		    columns:[
+		        	//	{text:' ',name:'gkey','value':'gkey'},
+		           		{text:'Date',name:'date'},
+		           		{text:'Project',name:'project'},
+		           		{text:'Hours',name:'hours'},
+		        		{text:'Notes',name:'notes'},
+		    ],
+		    commands:[
+		  	    {'text':'Edit ','name':'Edit',},
+		        //{'text':'Cancel','name':'Cancel','image':'comSampleFramework/plugins/mochaList/images/cancel.png'},
+		    ],
+		    onItemCommand: function(item,self,cmd,img) {
+		        //alert('received ' + cmd.name + ' command on item ' + item.value);
+		        if (cmd.name == 'Edit') {
+			        window.location="event.html?gkey=" + item.gkey;
+		        }
+		    },
+		    onItemChecked: function(item,self,cmd,img) {
+		        //alert('received onItemChecked command on item ' + cmd +  item.gkey);
+		        var itemGkey = item.gkey;
+		        var gkeyIndex = selectInfo.indexOf(itemGkey);
+		        if (gkeyIndex == - 1) {
+		        	selectInfo.push(itemGkey);
+		        } else {
+		        	selectInfo.splice(gkeyIndex, 1);
+		        }
+		    },
+		    onItemSelected: function(item,self,cmd,img) {
+		        //alert('received selected ' + cmd.name + ' command on item ' + item.value);
+		        var itemGkey = item.gkey;
+		        var gkeyIndex = selectInfo.indexOf(itemGkey);
+		        if (gkeyIndex == - 1) {
+		        	selectInfo.push(itemGkey);
+		        } else {
+		        	selectInfo.splice(gkeyIndex, 1);
+		        }	
+		  	  window.location="event.html?gkey=" + item.gkey;
+			// open in new tab?	 window.open("event.html?gkey="+item.gkey)
+		    },
+		    onItemColumnBound: function(item,self,col,td) {
+		    }
+		});  
+	}
+}
+
+</script>
+
+<script>
+rebuildList();
+</script>
+
+    <script>
+    	function deleteSelected() {
+			for (var i = 0; i < selectInfo.length; i++) {
+				gkeyToDelete = selectInfo[i];
+				var filterInfo = new Array();
+				filterInfo[0] = {field:'gkey', value:gkeyToDelete};
+	    		domainEntityCrud.deleteMatchingDomainEntities('PJIEventsFrontServlet', 'Event', filterInfo);
+	    		listElement.deleteItemById(gkeyToDelete);
+			}   
+			rebuildList();
+			window.location="index.html";
+    	}
+	  </script>
+	  
+
+	  
+	
+   
+    	
+	  
+
+<style>
+	
+#desktop {
+	visibility: visible;
+}
+
+
+
+#pageWrapper {
+	overflow: auto;
+	background: #7c9dbf;
+	border: 0;	
+}
+
+#page {
+	margin: 0 auto 0;
+	background: #fff;	
+}
+
+#header {
+	background: white;
+	width:100%;
+	padding: 20px;
+	/*position:static;*/
+}
+
+#desktopNavbar {
+	background: #181818;
+	height:+30px;
+	border-bottom:solid black 3px;
+	/*position:static;*/
+	/*top:150px;*/
+}
+
+#navigation {
+	background: #181818;
+	padding: 5px 20px;	
+}
+
+#content {
+	padding: 20px;
+}
+
+#footer {
+	background: #f0f0f0;
+	padding: 10px 20px;
+}
+
+#dockWrapper {
+	border-top: 1px solid #999;
+	border-bottom: 0;
+}
+
+#dockWrapper.top {
+	border-top: 0;
+	border-bottom: 1px solid #999;
+}
+.navButtons {
+			color:white;
+			font-weight:bold;
+			font-size:12px;
+			target-new:tab;
+}
+#buttons {
+			margin-left:+150;
+			/*margin-right:auto;
+			width:80%;*/
+}
+h1 {
+	font-family:Arial;
+	font-size:28px;
+}
+td {
+padding:10px;
+}
+
+</style>	
+
+    <!-- <script type="text/javascript" src="scripts/aboutBox.js"></script>-->
+
+</head>
+
+<body>
+<!-- script type="text/javascript" src="scripts/src/pageTop.js"></script>-->
+ 	<div id=header>
+	<h1>Events</h1>
+	</div>
+<!-- 	<div id="desktopNavbar">
+		<TD COLSPAN="15" ALIGN="CENTER">
+		        <button VALUE="Delete Selected" onClick="deleteSelected()">Trash Me</button>
+		        <button VALUE="Rebuild List" onClick="rebuildList()">List</button>
+		        
+		     <INPUT TYPE="button" VALUE="New" onClick="editSelected()"> 
+		        <INPUT TYPE="button" VALUE="Search" onClick="search()">
+		        
+		
+	  <ul>
+			<li><a class="returnFalse" href="">Actions</a>
+				<ul>
+				<li><a href="Javascript:deleteSelected();">Delete Selected</a></li>				
+				<li><a href="Javascript:rebuildList();">Rebuild List</a></li>				
+				</ul>
+			</li>
+		</ul>
+		
+	</div> -->
+	
+	<div id="desktopNavbar">
+	<table id="buttons">
+			<tr>    
+		    <td><a class="navButtons" onClick="deleteSelected()" style="cursor:pointer; cursor:hand;">Delete Selected</a></td>
+		    <td><a class="navButtons" onClick="rebuildList()" style="cursor:pointer; cursor:hand;">Rebuild List</a></td>
+		    <td><a class="navButtons" href="event.html" target="_blank" style="cursor:pointer; cursor:hand;">Search</a></td>
+		    <td><a class="navButtons" href="event.html" target="_blank" style="cursor:pointer; cursor:hand;">New</a></td>
+		    <td><a class="navButtons" onClick="preferenceBuilder()" style="cursor:pointer; cursor:hand;">Preferences</a></td>
+		    <!--  <td><a class="navButtons" onClick="clearForm()"style="cursor:pointer; cursor:hand;">Clear Form</a></td>-->
+		</tr>
+	</table>
+	</div>		
+
+	<div id="page">
+	</div>
+
+</body>
+</html>
